@@ -1,0 +1,56 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block head %}
+{{ super() }}
+<link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
+<style media="screen">
+body {
+  color: rgb(59, 57, 64);
+  background-color: rgb(247, 246, 255);
+  font-size: 20px;
+  font-family: 'Fjalla One', sans-serif;
+}
+
+.navbar {
+  background-color: #007bff;
+}
+
+.navbar-brand {
+  color: white !important;
+}
+
+.navbar-brand:hover {
+  color: #ddd !important;
+}
+</style>
+{% endblock %}
+
+{% block title %}Garbage & Pothole Reporting System{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{% endblock %}
+
+{% block navbar %}
+  <div class="navbar navbar-dark bg-primary" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{{url_for('.index')}}">Garbage & Pothole Reporting</a>
+        <a class="navbar-brand" href="{{url_for('.complaint')}}">Report an Issue</a>
+        <a class="navbar-brand" href="{{url_for('.display', role=role)}}">View Issues</a>
+      </div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endblock %}

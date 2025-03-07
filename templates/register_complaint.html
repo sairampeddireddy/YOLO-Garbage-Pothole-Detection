@@ -1,0 +1,187 @@
+{% extends "bootstrap/base.html" %}
+
+{% block head %}
+{{ super() }}
+<link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<style>
+    body {
+        color: rgb(255, 255, 255);
+        background-color: rgb(34, 40, 49);
+        font-size: 20px;
+        font-family: 'Fjalla One', sans-serif;
+    }
+
+    .container {
+        text-align: center;
+        padding: 50px 0;
+    }
+
+    h2 {
+        font-size: 50px;
+        color: rgb(255, 211, 105);
+    }
+
+    .form-control {
+        width: 50%;
+        margin: auto;
+        font-size: 18px;
+    }
+
+    .btn-primary {
+        background-color: rgb(0, 150, 136);
+        border: none;
+        font-size: 20px;
+    }
+
+    .btn-primary:hover {
+        background-color: rgb(0, 180, 156);
+    }
+
+    .btn-secondary {
+        background-color: rgb(255, 87, 34);
+        border: none;
+        font-size: 20px;
+    }
+
+    .btn-secondary:hover {
+        background-color: rgb(255, 100, 50);
+    }
+
+    img {
+        margin-top: 20px;
+        border-radius: 10px;
+        width: 200px;
+        height: auto;
+    }
+
+    #map {
+        width: 100%;
+        height: 70vh; /* Increased height */
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        height: 90%;
+        background: white;
+        padding: 20px;
+        text-align: center;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .map-container {
+        flex-grow: 1;
+    }
+
+    .modal-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Register Your Complaint</h2>
+
+    {% if image_path %}
+    <div class="mt-4">
+        <h4 style="color: rgb(255, 211, 105);">Detected Issue</h4>
+        <img src="{{ url_for('uploaded_file', filename=image_path) }}" class="img-fluid mt-3" alt="Detected Issue">
+    </div>
+    {% endif %}
+
+    <form action="{{ url_for('register_complaint') }}" method="post" class="mt-4">
+        <input type="hidden" name="image_path" value="{{ image_path }}">
+        
+        <div class="form-group mt-3">
+            <input type="text" name="area" class="form-control" placeholder="Enter Area, Road no, Colony" required>
+        </div>
+        <div class="form-group mt-3">
+            <input type="text" name="city" class="form-control" placeholder="Enter City" required>
+        </div>
+        <div class="form-group mt-3">
+            <input type="text" name="pincode" class="form-control" placeholder="Enter Pincode" required>
+        </div>
+        <div class="form-group mt-3">
+            <input type="text" name="landmark" class="form-control" placeholder="Enter Landmark" required>
+        </div>
+        <div class="form-group mt-3">
+            <textarea name="complaint_body" class="form-control" placeholder="Enter Complaint Details" required></textarea>
+        </div>
+
+        <button type="button" class="btn btn-primary mt-4" onclick="openMapModal()">Choose Location</button>
+        <input type="hidden" name="latitude" id="latitude">
+        <input type="hidden" name="longitude" id="longitude">
+        <p id="location-status" class="mt-3" style="color: rgb(255, 211, 105);">No location selected</p>
+
+        <button type="submit" class="btn btn-primary mt-4">Submit Complaint</button>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary mt-4">Go to Home</a>
+    </form>
+</div>
+
+<div id="mapModal" class="modal">
+    <div class="modal-content">
+        <h3>Select Location</h3>
+        <div id="map" class="map-container"></div>
+        <div class="modal-buttons">
+            <button class="btn btn-primary" onclick="confirmLocation()">Confirm Location</button>
+            <button class="btn btn-secondary" onclick="closeMapModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    let map;
+    let marker;
+    let selectedLat, selectedLng;
+
+    function openMapModal() {
+        document.getElementById("mapModal").style.display = "block";
+        if (!map) {
+            map = L.map('map').setView([20.5937, 78.9629], 5);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            marker = L.marker([20.5937, 78.9629], { draggable: false }).addTo(map);
+        }
+        map.invalidateSize();
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+            selectedLat = e.latlng.lat;
+            selectedLng = e.latlng.lng;
+        });
+    }
+
+    function confirmLocation() {
+        document.getElementById("latitude").value = selectedLat;
+        document.getElementById("longitude").value = selectedLng;
+        document.getElementById("location-status").innerText = "Location Selected";
+        closeMapModal();
+    }
+
+    function closeMapModal() {
+        document.getElementById("mapModal").style.display = "none";
+    }
+</script>
+{% endblock %}

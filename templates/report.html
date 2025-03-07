@@ -1,0 +1,94 @@
+{% extends "bootstrap/base.html" %}
+
+{% block head %}
+{{ super() }}
+<link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
+<style>
+    body {
+        color: rgb(255, 255, 255);
+        background-color: rgb(34, 40, 49);
+        font-size: 20px;
+        font-family: 'Fjalla One', sans-serif;
+    }
+
+    .container {
+        text-align: center;
+        padding: 50px 0;
+    }
+
+    h2 {
+        font-size: 50px;
+        color: rgb(255, 211, 105);
+    }
+
+    .form-control {
+        width: 50%;
+        margin: auto;
+        font-size: 18px;
+    }
+
+    .btn-primary {
+        background-color: rgb(0, 150, 136);
+        border: none;
+        font-size: 20px;
+    }
+
+    .btn-primary:hover {
+        background-color: rgb(0, 180, 156);
+    }
+
+    .btn-secondary {
+        background-color: rgb(255, 87, 34);
+        border: none;
+        font-size: 20px;
+    }
+
+    .btn-secondary:hover {
+        background-color: rgb(255, 100, 50);
+    }
+
+    img {
+    margin-top: 20px;
+    border-radius: 10px;
+    max-width: 100%; /* Ensures image does not exceed container width */
+    width: 500px; /* Set a fixed width */
+    height: auto; /* Maintain aspect ratio */
+    object-fit: contain; /* Ensures the entire image fits within the defined size */
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Report Garbage or Pothole</h2>
+    <p>Upload an image to detect and report issues.</p>
+
+    <form action="{{ url_for('report') }}" method="post" enctype="multipart/form-data" class="mt-4">
+        <input type="file" name="image" required class="form-control mb-3">
+        <button type="submit" class="btn btn-primary">Upload & Detect</button>
+    </form>
+
+    {% if processed %}
+    <div class="mt-5">
+        <h4 style="color: rgb(255, 211, 105);">Processed Image (With Detections)</h4>
+        <img src="{{ url_for('uploaded_file', filename=processed) }}" class="img-fluid" alt="Processed Image">
+    </div>
+
+    <div class="mt-4">
+        {% if detection_result.garbage > 0 or detection_result.pothole > 0 %}
+            {% if detection_result.garbage > 0 %}
+                <p style="color: rgb(255, 211, 105);">{{ detection_result.garbage }} Garbage item(s) detected!</p>
+            {% endif %}
+            {% if detection_result.pothole > 0 %}
+                <p style="color: rgb(255, 211, 105);">{{ detection_result.pothole }} Pothole(s) detected!</p>
+            {% endif %}
+            <a href="{{ url_for('register_complaint', image_path=processed) }}" class="btn btn-primary">Register Complaint</a>
+        {% else %}
+            <p style="color: rgb(255, 211, 105);">No garbage or potholes detected in the image.</p>
+        {% endif %}
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Go to Home</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
