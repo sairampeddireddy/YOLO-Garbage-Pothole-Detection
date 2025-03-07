@@ -1,0 +1,41 @@
+{% extends "bootstrap/base.html" %}
+
+{% block head %}
+{{ super() }}
+<style>
+    body {
+        background-color: rgb(34, 40, 49);
+        color: white;
+        font-family: 'Fjalla One', sans-serif;
+        text-align: center;
+    }
+
+    .container {
+        margin-top: 100px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 18px;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        color: white;
+        margin: 10px;
+    }
+
+    .home-btn {
+        background-color: rgb(0, 150, 136);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>✅ Complaint Registered Successfully!</h2>
+    <p>Your complaint has been submitted.</p>
+    <h3>Complaint ID: <span style="color: rgb(66, 135, 245);">{{ complaint_id }}</span></h3>
+
+    <a href="{{ url_for('index') }}" class="btn home-btn">🏠 Go to Home</a>
+</div>
+{% endblock %}

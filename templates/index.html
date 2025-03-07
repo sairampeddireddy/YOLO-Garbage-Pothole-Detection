@@ -1,0 +1,69 @@
+{% extends "bootstrap/base.html" %}
+{% block head %}
+{{ super() }}
+<link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
+<style>
+    body {
+        color: rgb(255, 255, 255);
+        background-color: rgb(34, 40, 49); /* Dark background for a modern look */
+        font-size: 20px;
+        font-family: 'Fjalla One', sans-serif;
+    }
+
+    .header {
+        text-align: center;
+        padding: 100px 0;
+        background-color: rgb(27, 38, 44); /* Darker shade for contrast */
+    }
+
+    .header h1 {
+        font-size: 80px;
+        color: rgb(255, 211, 105); /* Yellow theme for caution */
+    }
+
+    .header p {
+        font-size: 25px;
+        color: rgb(200, 200, 200);
+    }
+
+    .button-container {
+        margin-top: 50px;
+    }
+
+    .action-button {
+        width: 300px;
+        height: 70px;
+        background-color: rgb(0, 150, 136); /* Green for environment & action */
+        border: none;
+        border-radius: 10px;
+        font-size: 22px;
+        color: white;
+        cursor: pointer;
+        margin: 10px;
+        transition: 0.3s;
+    }
+
+    .action-button:hover {
+        background-color: rgb(0, 180, 156);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Garbage & Pothole Reporting</h1>
+    <p>A smart city initiative to keep roads clean and safe.</p>
+
+    <div class="button-container">
+        <a href="{{url_for('report')}}">
+            <button class="action-button">Report an Issue</button>
+        </a>
+        <a href="{{url_for('login')}}">
+            <button class="action-button" style="background-color: rgb(255, 87, 34);">Admin Login</button>
+        </a>
+        <a href="{{url_for('user_complaints')}}">
+            <button class="action-button" style="background-color: rgb(255, 165, 0);">View Complaint Status</button>
+        </a>
+    </div>
+</div>
+{% endblock %}

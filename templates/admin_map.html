@@ -1,0 +1,115 @@
+{% extends "admin_dashboard.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center mt-3 mb-3">Complaints Map</h2>
+
+    <!-- Centered Back to Dashboard Button -->
+    <div class="d-flex justify-content-center mb-3">
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary">← Back to Dashboard</a>
+    </div>
+
+    <!-- Map Container -->
+    <div id="map-container">
+        <div id="map"></div>
+
+        <!-- Legend Box -->
+        <div id="legend">
+            <b>Legend:</b>
+            <div><span style="background:red;"></span> Pending</div>
+            <div><span style="background:orange;"></span> In Progress</div>
+            <div><span style="background:green;"></span> Resolved</div>
+            <div><span style="background:blue;"></span> Rejected</div>
+        </div>
+    </div>
+</div>
+
+<!-- Leaflet.js -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    var complaints = JSON.parse('{{ complaints_json | safe }}');
+
+    var map = L.map('map').setView([20.5937, 78.9629], 6);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    function getColor(status) {
+        switch(status.toLowerCase()) {
+            case 'pending': return 'red';
+            case 'in progress': return 'orange';
+            case 'resolved': return 'green';
+            case 'rejected': return 'blue';
+            default: return 'gray'; // Default color for unknown status
+        }
+    }
+
+    complaints.forEach(function(complaint) {
+        if (complaint.lat !== null && complaint.lng !== null) {
+            var marker = L.circleMarker([complaint.lat, complaint.lng], {
+                radius: 7,
+                color: getColor(complaint.status),
+                fillColor: getColor(complaint.status),
+                fillOpacity: 0.8
+            }).addTo(map);
+
+            marker.bindPopup(`<b>ID:</b> ${complaint.id} <br>
+                              <b>Status:</b> ${complaint.status}`);
+        }
+    });
+</script>
+
+<style>
+    .container {
+        max-width: 95%;
+    }
+
+    #map-container {
+        position: relative;
+        margin: 0 auto;
+        width: 80%;
+    }
+
+    #map {
+        height: 400px;
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Updated Legend Styling */
+    #legend {
+        position: absolute;
+        top: 10px; /* Moves it to the top */
+        right: 10px; /* Aligns it to the right */
+        background: rgba(255, 255, 255, 0.9); /* Slightly more solid white */
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 14px;
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+        z-index: 1000; /* Ensures it's always on top */
+        color: black; /* Ensures text is black */
+        font-weight: bold;
+    }
+
+    #legend div {
+        display: flex;
+        align-items: center;
+        margin: 5px 0;
+        color: black; /* Ensures legend text is black */
+    }
+
+    #legend span {
+        width: 15px;
+        height: 15px;
+        display: inline-block;
+        margin-right: 10px;
+        border-radius: 50%;
+        border: 1px solid #000;
+    }
+</style>
+
+{% endblock %}

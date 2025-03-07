@@ -1,0 +1,90 @@
+{% extends "bootstrap/base.html" %}
+
+{% block head %}
+{{ super() }}
+<style>
+    body {
+        background-color: rgb(34, 40, 49);
+        color: white;
+        font-family: 'Fjalla One', sans-serif;
+    }
+
+    .container {
+        width: 50%;
+        margin: auto;
+        margin-top: 50px;
+        padding: 20px;
+        background-color: rgb(27, 38, 44);
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: rgb(44, 62, 80);
+        color: white;
+    }
+
+    th, td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid rgb(66, 135, 245);
+    }
+
+    img {
+        width: 150px; /* Adjusted to a smaller size */
+        border-radius: 5px;
+    }
+
+    .form-control {
+        width: 100%;
+        font-size: 18px;
+        padding: 10px;
+    }
+
+    .btn-primary {
+        background-color: rgb(0, 150, 136);
+        border: none;
+        font-size: 20px;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} mt-3">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <h2>🔍 Search Complaint</h2>
+    <p>Enter your Complaint ID to check status.</p>
+
+    <form action="{{ url_for('user_complaints') }}" method="POST">
+        <input type="text" name="complaint_id" class="form-control" placeholder="Enter Complaint ID" required>
+        <button type="submit" class="btn btn-primary mt-3">View Complaint</button>
+    </form>
+</div>
+
+{% if complaint %}
+<div class="container mt-5">
+    <h2>📄 Complaint Details</h2>
+    <table>
+        <tr><th>ID</th><td>{{ complaint.id }}</td></tr>
+        <tr><th>Image</th><td><img src="{{ url_for('uploaded_file', filename=complaint.image_path) }}" alt="Complaint Image"></td></tr>
+        <tr><th>Description</th><td>{{ complaint.complaint_body }}</td></tr>
+        <tr><th>Address (Area, City)</th><td>{{ complaint.area }}, {{ complaint.city }}</td></tr>
+        <tr><th>Landmark</th><td>{{ complaint.landmark }}</td></tr>
+        <tr><th>Pincode</th><td>{{ complaint.pincode }}</td></tr>
+        <tr><th>Latitude</th><td>{{ complaint.latitude }}</td></tr>
+        <tr><th>Longitude</th><td>{{ complaint.longitude }}</td></tr>
+        <tr><th>Status</th><td><strong>{{ complaint.status }}</strong></td></tr>
+        <tr><th>Registered On</th><td>{{ complaint.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td></tr>
+    </table>
+</div>
+{% endif %}
+{% endblock %}
